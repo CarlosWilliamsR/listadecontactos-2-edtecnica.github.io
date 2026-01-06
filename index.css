@@ -1,0 +1,417 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+
+:root {
+    /* Tema Claro */
+    --bg-primary: #f4f7fa;      /* Fondo de la página (un gris azulado muy claro) */
+    --bg-secondary: #ffffff;   /* Fondo del contenedor principal (blanco) */
+    --bg-tertiary: #f0f3f7;     /* Fondo de inputs y botones de icono */
+    --text-primary: #1a202c;     /* Texto principal (casi negro) */
+    --text-secondary: #5a667b;   /* Texto de labels (gris) */
+    --border-color: #dbe1ea;
+    
+    --accent: #6d28d9;         /* Morado principal */
+    --accent-hover: #5b21b6;   /* Morado más oscuro para hover */
+    --accent-light: #f5f3ff;   /* Morado muy claro para fondos */
+
+    --edit-color: #2563eb;     /* Azul para editar */
+    --edit-light: #eff6ff;     /* Azul claro */
+    --delete-color: #dc2626;   /* Rojo para eliminar */
+    --delete-light: #fef2f2;   /* Rojo claro */
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Tema Oscuro */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #121826;
+        --bg-secondary: #1e293b;
+        --bg-tertiary: #334155;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --border-color: #475569;
+
+        --accent: #8b5cf6;
+        --accent-hover: #7c3aed;
+        --accent-light: #28233e;
+
+        --edit-color: #3b82f6;
+        --edit-light: #1e293b;
+        --delete-color: #ef4444;
+        --delete-light: #2e1a24;
+    }
+}
+
+
+/* === RESET Y BODY === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    
+    /* REGLA CLAVE: "Nada de scroll" en la página */
+    overflow: hidden;
+}
+
+html {
+    height: 100%;
+    overflow: hidden;
+}
+
+/* === CONTENEDOR PRINCIPAL === */
+.app-container {
+    width: 100%;
+    max-width: 640px; /* Un poco más de espacio */
+    background-color: var(--bg-secondary);
+    border-radius: 16px; /* Más redondeado */
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    box-shadow: var(--shadow-md);
+    
+    max-height: 95vh; 
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+
+/* === FORMULARIO DE CREACIÓN === */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0; 
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-primary); /* Fondo sutil */
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.btn-crear {
+    padding: 0.75rem 1.25rem;
+    background-color: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    align-self: flex-start; /* Alineado a la izquierda */
+}
+
+.btn-crear:hover {
+    background-color: var(--accent-hover);
+    transform: scale(1.02);
+}
+
+
+/* === ESTADOS DE ERROR === */
+.form-group .error-message {
+    display: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--delete-color);
+}
+.form-group.error input {
+    border-color: var(--delete-color);
+    background-color: var(--delete-light);
+}
+.form-group.error input:focus {
+    box-shadow: 0 0 0 3px var(--delete-light);
+}
+.form-group.error .error-message {
+    display: block;
+}
+
+
+/* === LISTA DE CONTACTOS === */
+.contact-list-container {
+    overflow-y: auto; /* Scroll interno */
+    flex-grow: 1;
+    /* Efecto de "fade" para el scroll */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 12px, black 95%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, black 12px, black 95%, transparent 100%);
+    padding: 4px 0; /* Espacio para el fade */
+}
+
+#contact-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Espacio entre items */
+}
+
+.contact-item {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+    align-items: center;
+    background-color: var(--bg-secondary);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+}
+
+
+
+
+.contact-item input[readonly] {
+    border-color: transparent;
+    background-color: transparent;
+    padding-left: 0;
+    font-weight: 500;
+    color: var(--text-primary);
+    pointer-events: none; /* No se puede hacer clic */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.contact-item input:not([readonly]) {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
+    font-weight: 400;
+    color: var(--text-primary);
+}
+.contact-item input:not([readonly]):focus {
+    outline: none;
+    border-color: var(--edit-color);
+}
+
+/* Proporcionalidad */
+.contact-item .contact-name {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 0.95rem;
+}
+
+.contact-item .contact-number {
+    flex: 0 0 clamp(110px, 18%, 130px);
+    min-width: 110px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* 3. Estilo del item completo al editar (JS) */
+.contact-item.editing {
+    box-shadow: 0 0 0 3px var(--edit-color);
+    border-color: var(--edit-color);
+}
+
+
+/* === BOTONES DE ACCIÓN === */
+.contact-item .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-buttons button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.action-buttons button.edit {
+    background-color: var(--edit-light);
+    color: var(--edit-color);
+}
+
+.action-buttons button.edit:hover {
+    background-color: var(--edit-color);
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.action-buttons button.delete {
+    background-color: var(--delete-light);
+    color: var(--delete-color);
+}
+
+.action-buttons button.delete:hover {
+    background-color: var(--delete-color);
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Botones de Acción */
+.contact-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.btn-action {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s, color 0.2s, transform 0.1s;
+}
+
+/* Colores de botones */
+.btn-edit { color: var(--edit-color); }
+.btn-delete { color: var(--delete-color); }
+
+/* Hover de botones */
+.btn-edit:hover, .btn-edit:focus-visible {
+    background-color: var(--edit-light);
+    color: var(--edit-color);
+    transform: scale(1.1);
+}
+.btn-delete:hover, .btn-delete:focus-visible {
+    background-color: var(--delete-light);
+    color: var(--delete-color);
+    transform: scale(1.1);
+}
+
+/* Estilo del botón "Guardar" (JS) */
+.btn-action.editing {
+    background-color: var(--edit-color);
+    color: #ffffff;
+}
+.btn-action.editing:hover {
+    background-color: #1d4ed8; /* Azul más oscuro */
+}
+
+/* Animación de borrado (JS) */
+.contact-item.removing {
+    animation: slideOut 0.3s ease-out forwards;
+}
+@keyframes slideOut {
+    to { 
+        opacity: 0; 
+        transform: translateX(-20px); 
+        height: 0; 
+        padding: 0; 
+        margin: 0; 
+        border: none;
+    }
+}
+
+
+/* === RESPONSIVE MEJORADO (MÓVIL) === */
+@media (max-width: 600px) {
+    body {
+        padding: 0;
+        align-items: flex-start; 
+    }
+    
+    .app-container {
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 0;
+        padding: 1rem;
+        border: none;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Ocultamos labels en móvil y usamos placeholders */
+    .form-group label {
+        display: none;
+    }
+    .form-group input {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+
+    /* Layout de items en móvil (botones bajan) */
+    .contact-item {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .contact-item .contact-name {
+        flex-basis: 60%;
+        flex-grow: 1;
+        font-size: 1rem;
+    }
+
+    .contact-item .contact-number {
+        flex-basis: 30%;
+        flex-grow: 1;
+        font-size: 0.9rem;
+        text-align: left; /* Alinear a la izquierda */
+    }
+    
+   
+    .contact-item input[readonly].contact-number {
+        padding-left: 0;
+    }
+
+    /* Botones en la segunda línea */
+    .contact-actions {
+        flex-basis: 100%;
+        justify-content: flex-end; /* Alineados a la derecha */
+        gap: 0.75rem;
+    }
+    
+    .btn-action {
+        width: 40px; /* Más grandes para el tacto */
+        height: 40px;
+        font-size: 1rem;
+    }
+}
